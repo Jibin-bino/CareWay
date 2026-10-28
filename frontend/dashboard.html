@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="CareWay Patient Dashboard - Manage your appointments.">
+    <title>CareWay - Patient Dashboard</title>
+    <link rel="stylesheet" href="./css/index.css">
+    <style>
+        body { background-color: var(--alice-blue); }
+        .dashboard-container { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem 3.5rem; }
+        .dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+        .welcome-title { font-size: 1.75rem; font-weight: 700; color: var(--prussian-blue); margin-bottom: 0.25rem; }
+        .welcome-subtitle { font-size: 1rem; color: var(--muted-text); margin-bottom: 0; }
+
+        .section-card { background: var(--white); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 1px 3px rgba(6,78,59,0.06); }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border-color); }
+        .section-title { font-size: 1.25rem; font-weight: 700; color: var(--prussian-blue); margin: 0; }
+
+        .appt-card { border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 1.25rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+        .appt-card:last-child { margin-bottom: 0; }
+        .appt-card.upcoming { border-left: 4px solid var(--salesport-blue); background: var(--alice-blue); }
+
+        .appt-info { display: flex; flex-direction: column; gap: 0.25rem; }
+        .appt-dept { font-size: 0.85rem; font-weight: 600; color: var(--salesport-blue); text-transform: uppercase; letter-spacing: 0.5px; }
+        .appt-doctor { font-size: 1.1rem; font-weight: 700; color: var(--prussian-blue); }
+        .appt-time { font-size: 0.9rem; color: var(--muted-text); margin-top: 0.25rem; }
+        .appt-fee { font-size: 0.875rem; font-weight: 700; color: var(--prussian-blue); margin-top: 0.25rem; }
+
+        .status-badge { padding: 0.25rem 0.75rem; border-radius: 50px; font-size: 0.8rem; font-weight: 700; white-space: nowrap; }
+        .status-confirmed { background: #DCFCE7; color: #16A34A; }
+        .status-completed { background: #F1F5F9; color: #475569; }
+
+        .empty-state { text-align: center; padding: 3rem 1rem; color: var(--muted-text); }
+        .empty-state p { margin-bottom: 1rem; }
+
+        .error-state { text-align: center; padding: 2rem 1rem; color: #DC2626; }
+        .retry-btn { margin-top: 0.75rem; background: none; border: 1px solid #DC2626; color: #DC2626; padding: 0.5rem 1rem; border-radius: var(--radius-md); cursor: pointer; font-size: 0.875rem; }
+        .retry-btn:hover { background: #FEF2F2; }
+    </style>
+</head>
+<body>
+    <nav class="navbar" aria-label="Main Navigation"></nav>
+
+    <main class="main-content">
+        <div class="dashboard-container">
+            <header class="dashboard-header">
+                <div>
+                    <h1 class="welcome-title" id="welcome-greeting">Welcome back</h1>
+                    <p class="welcome-subtitle">Here is an overview of your appointments.</p>
+                </div>
+                <a href="book_doctor.html" class="btn btn-primary" style="font-weight:600; padding:0.75rem 1.5rem;">+ Book an Appointment</a>
+            </header>
+
+            <div class="section-card">
+                <div class="section-header">
+                    <h2 class="section-title">Upcoming Appointments</h2>
+                </div>
+                <div id="upcoming-container">
+                    <p class="empty-state">Loading upcoming appointments...</p>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <div class="section-header">
+                    <h2 class="section-title">Appointment History</h2>
+                </div>
+                <div id="history-container">
+                    <p class="empty-state">Loading appointment history...</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer" id="app-footer"></footer>
+
+    <script src="./js/app.js"></script>
+    <script>
+        requireAuth();
+
+        function formatApptDate(dateStr) {
+            try {
+                var parts = dateStr.split('-');
+                var dt = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+                return dt.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+            } catch(e) { return dateStr; }
+        }
+
+        function formatApptTime(startTime) {
+            try {
+                var h = parseInt(startTime.split(':')[0], 10);
+                return h < 13 ? 'Morning (10:00 AM - 1:00 PM)' : 'Afternoon (2:00 PM - 5:00 PM)';
+            } catch(e) { return startTime; }
+        }
+
+        function renderUpcoming(list) {
+            var container = document.getElementById('upcoming-container');
+            if (!list.length) {
+                container.innerHTML = '<div class="empty-state"><p>You have no upcoming appointments.</p><a href="book_doctor.html" class="btn btn-outline">Book Now</a></div>';
+                return;
+            }
+            var html = '';
+            for (var i = 0; i < list.length; i++) {
+                var a = list[i];
+                html += '<div class="appt-card upcoming">' +
+                    '<div class="appt-info">' +
+                    '<span class="appt-dept">' + (a.doctor_department || a.doctor_specialization || 'Consultation') + '</span>' +
+                    '<span class="appt-doctor">Dr. ' + a.doctor_name + '</span>' +
+                    '<span class="appt-time">&#128197; ' + formatApptDate(a.date) + ' &nbsp; &#8987; ' + formatApptTime(a.start_time) + '</span>' +
+                    '<span class="appt-fee">' + formatINR(a.doctor_fee) + '</span>' +
+                    '</div>' +
+                    '<span class="status-badge status-confirmed">&#9679; Confirmed</span>' +
+                    '</div>';
+            }
+            container.innerHTML = html;
+        }
+
+        function renderHistory(list) {
+            var container = document.getElementById('history-container');
+            if (!list.length) {
+                container.innerHTML = '<div class="empty-state"><p>No past appointments found.</p></div>';
+                return;
+            }
+            var html = '';
+            for (var i = 0; i < list.length; i++) {
+                var a = list[i];
+                html += '<div class="appt-card">' +
+                    '<div class="appt-info">' +
+                    '<span class="appt-dept">' + (a.doctor_department || a.doctor_specialization || 'Consultation') + '</span>' +
+                    '<span class="appt-doctor">Dr. ' + a.doctor_name + '</span>' +
+                    '<span class="appt-time">&#128197; ' + formatApptDate(a.date) + ' &nbsp; &#8987; ' + formatApptTime(a.start_time) + '</span>' +
+                    '</div>' +
+                    '<span class="status-badge status-completed">Completed</span>' +
+                    '</div>';
+            }
+            container.innerHTML = html;
+        }
+
+        function showError() {
+            document.getElementById('upcoming-container').innerHTML =
+                '<div class="error-state"><p>Unable to load your appointments.</p>' +
+                '<button class="retry-btn" onclick="loadDashboard()">Try Again</button></div>';
+            document.getElementById('history-container').innerHTML =
+                '<div class="error-state"><p>Unable to load appointment history.</p></div>';
+        }
+
+        async function loadDashboard() {
+            // Update greeting
+            var user = Auth.getUser();
+            var greeting = 'Hello, Patient';
+            if (user) {
+                greeting = 'Hello, ' + (getDisplayName(user) || user.username || 'Patient');
+            }
+            document.getElementById('welcome-greeting').textContent = greeting + ' 👋';
+
+            // Reset loading state
+            document.getElementById('upcoming-container').innerHTML = '<p class="empty-state">Loading upcoming appointments...</p>';
+            document.getElementById('history-container').innerHTML = '<p class="empty-state">Loading appointment history...</p>';
+
+            var token = Auth.getToken();
+            if (!token) { showError(); return; }
+
+            try {
+                var res = await fetch(API_BASE_URL + '/healthcare/appointments/list/', {
+                    headers: { 'Authorization': 'Token ' + token }
+                });
+
+                if (res.status === 401) {
+                    Auth.logout();
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                if (!res.ok) {
+                    showError();
+                    return;
+                }
+
+                var appointments = await res.json();
+
+                var today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                var upcoming = [];
+                var history = [];
+
+                for (var i = 0; i < appointments.length; i++) {
+                    var appt = appointments[i];
+                    var parts = appt.date.split('-');
+                    var apptDate = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+                    if (apptDate >= today) {
+                        upcoming.push(appt);
+                    } else {
+                        history.push(appt);
+                    }
+                }
+
+                renderUpcoming(upcoming);
+                renderHistory(history);
+
+            } catch (err) {
+                console.error('Dashboard load error:', err);
+                showError();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadDashboard);
+    </script>
+</body>
+</html>

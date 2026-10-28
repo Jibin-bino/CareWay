@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Create a CareWay account - Access personalized healthcare navigation and verified doctor booking.">
+    <title>CareWay - Register</title>
+    <link rel="stylesheet" href="./css/index.css">
+    <style>
+        body {
+            background-color: var(--alice-blue);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .auth-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem 1.25rem;
+        }
+
+        .auth-split-card {
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-xl);
+            box-shadow: 0 16px 45px -10px rgba(6, 78, 59, 0.14);
+            width: 100%;
+            max-width: 920px;
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 1fr 1.15fr;
+            animation: fadeIn 0.25s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Left visual showcase */
+        .auth-visual-side {
+            position: relative;
+            background: linear-gradient(135deg, #064E3B 0%, #022C22 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 2.5rem 2rem;
+            color: #fff;
+            overflow: hidden;
+        }
+        .auth-visual-img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.35;
+        }
+        .auth-visual-overlay {
+            position: relative;
+            z-index: 2;
+        }
+        .auth-visual-tag {
+            display: inline-block;
+            background: rgba(16, 185, 129, 0.25);
+            border: 1px solid rgba(16, 185, 129, 0.5);
+            color: #E6F7EF;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 0.25rem 0.75rem;
+            border-radius: 100px;
+            margin-bottom: 0.85rem;
+        }
+        .auth-visual-side h3 {
+            color: #fff;
+            font-size: 1.45rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+            line-height: 1.25;
+        }
+        .auth-visual-side p {
+            color: rgba(255, 255, 255, 0.88);
+            font-size: 0.875rem;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        /* Right Form Side */
+        .auth-card-body {
+            padding: 2.5rem 2.25rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .auth-brand-badge {
+            text-align: center;
+            font-size: 0.75rem;
+            font-weight: 800;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--salesport-blue);
+            margin-bottom: 0.35rem;
+        }
+
+        .auth-title {
+            font-size: 1.65rem;
+            font-weight: 800;
+            color: var(--prussian-blue);
+            text-align: center;
+            margin-bottom: 0.35rem;
+            letter-spacing: -0.02em;
+        }
+
+        .auth-subtitle {
+            font-size: 0.875rem;
+            color: var(--muted-text);
+            text-align: center;
+            margin-bottom: 1.5rem;
+            line-height: 1.45;
+        }
+
+        .auth-form .form-group {
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .auth-form .form-label {
+            display: block;
+            font-size: 0.825rem;
+            font-weight: 600;
+            color: var(--primary-text);
+            margin-bottom: 0.35rem;
+        }
+
+        .auth-form .form-control {
+            width: 100%;
+            padding: 0.65rem 0.85rem;
+            font-size: 0.9rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            background-color: #FFFFFF;
+            color: var(--primary-text);
+            transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+        }
+
+        .auth-form .form-control:focus {
+            outline: none;
+            border-color: var(--salesport-blue);
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.18);
+        }
+
+        .password-input-wrap {
+            position: relative;
+        }
+
+        .password-toggle-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--muted-text);
+            font-size: 1rem;
+            padding: 0.25rem;
+            line-height: 1;
+        }
+
+        .password-toggle-btn:hover {
+            color: var(--primary-text);
+        }
+
+        .auth-error {
+            background-color: #FEF2F2;
+            border: 1px solid #FEE2E2;
+            border-left: 3px solid var(--error);
+            color: #991B1B;
+            font-size: 0.825rem;
+            padding: 0.65rem 0.85rem;
+            border-radius: var(--radius-md);
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .auth-submit-btn {
+            width: 100%;
+            padding: 0.75rem 1.25rem;
+            font-size: 0.95rem;
+            font-weight: 700;
+            background-color: var(--prussian-blue);
+            color: var(--white);
+            border: 1px solid var(--prussian-blue);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            margin-top: 0.5rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(6, 78, 59, 0.2);
+        }
+
+        .auth-submit-btn:hover {
+            background-color: var(--prussian-blue-dark);
+            border-color: var(--prussian-blue-dark);
+            box-shadow: 0 4px 12px rgba(6, 78, 59, 0.3);
+        }
+
+        .auth-footer-text {
+            font-size: 0.875rem;
+            color: var(--muted-text);
+            text-align: center;
+            margin-top: 1.25rem;
+            margin-bottom: 0;
+        }
+
+        .auth-footer-text a {
+            color: var(--salesport-blue);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .auth-footer-text a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 760px) {
+            .auth-split-card {
+                grid-template-columns: 1fr;
+                max-width: 440px;
+            }
+            .auth-visual-side {
+                display: none;
+            }
+            .auth-card-body {
+                padding: 2rem 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Global Reusable Shared Navbar -->
+    <nav class="navbar" aria-label="Main Navigation"></nav>
+
+    <!-- Main Registration Section -->
+    <main class="main-content" style="padding: 0;">
+        <div class="auth-wrapper">
+            <div class="auth-split-card">
+                <!-- Visual Showcase Side -->
+                <div class="auth-visual-side">
+                    <img src="./assets/images/doctor_consultation.jpg" alt="Compassionate Doctor Care" class="auth-visual-img">
+                    <div class="auth-visual-overlay">
+                        <span class="auth-visual-tag">Verified Medical Care</span>
+                        <h3>Dedicated Specialists Who Put Patients First</h3>
+                        <p>Join CareWay today to experience streamlined healthcare triage, instant doctor appointments, and personalized medical records.</p>
+                    </div>
+                </div>
+
+                <!-- Form Side -->
+                <div class="auth-card-body">
+                    <div class="auth-brand-badge">JOIN CAREWAY</div>
+                    <h1 class="auth-title">Create Account</h1>
+                    <p class="auth-subtitle">Manage your healthcare appointments and consultations.</p>
+                    
+                    <div id="error-message" class="auth-error" role="alert"></div>
+
+                    <form id="register-form" class="auth-form" novalidate>
+                        <div class="form-group">
+                            <label class="form-label" for="fullname">Full Name</label>
+                            <input type="text" id="fullname" class="form-control" placeholder="Enter your full name" required autocomplete="name">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="email">Email</label>
+                            <input type="email" id="email" class="form-control" placeholder="Enter your email address" required autocomplete="email">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="phone">Phone Number</label>
+                            <input type="tel" id="phone" class="form-control" placeholder="Enter your phone number" required autocomplete="tel">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="password">Password</label>
+                            <div class="password-input-wrap">
+                                <input type="password" id="password" class="form-control" placeholder="Enter a password (min 6 characters)" required minlength="6" autocomplete="new-password">
+                                <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('password', this)" aria-label="Toggle password visibility">👁</button>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="confirm_password">Confirm Password</label>
+                            <div class="password-input-wrap">
+                                <input type="password" id="confirm_password" class="form-control" placeholder="Confirm your password" required autocomplete="new-password">
+                                <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('confirm_password', this)" aria-label="Toggle password visibility">👁</button>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="auth-submit-btn" id="btn-submit-register">Create Account</button>
+                    </form>
+
+                    <p class="auth-footer-text">
+                        Already have an account? <a href="login.html">Sign In</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer" id="app-footer"></footer>
+
+    <script src="./js/app.js"></script>
+    <script>
+        function togglePasswordVisibility(fieldId, btn) {
+            const input = document.getElementById(fieldId);
+            if (!input) return;
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.textContent = '🔒';
+            } else {
+                input.type = 'password';
+                btn.textContent = '👁';
+            }
+        }
+
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const fullname = document.getElementById('fullname').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const password = document.getElementById('password').value;
+            const confirm_password = document.getElementById('confirm_password').value;
+            const errorDiv = document.getElementById('error-message');
+            const submitBtn = document.getElementById('btn-submit-register');
+
+            errorDiv.style.display = 'none';
+
+            if (!fullname) {
+                errorDiv.textContent = 'Please enter your full name.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            if (!email) {
+                errorDiv.textContent = 'Please enter a valid email address.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            if (password.length < 6) {
+                errorDiv.textContent = 'Password must be at least 6 characters.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            if (password !== confirm_password) {
+                errorDiv.textContent = 'Passwords do not match.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Creating account...';
+
+            try {
+                const res = await fetch(`${API_BASE_URL}/auth/register/`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        username: email,
+                        password: password,
+                        email: email,
+                        name: fullname
+                    })
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    Auth.setToken(data.token);
+                    Auth.setUser(data.user);
+
+                    // Save custom full name and phone number
+                    if (data.user) {
+                        if (phone) {
+                            localStorage.setItem(`careway_phone_${data.user.id || email}`, phone);
+                        }
+                        if (fullname) {
+                            localStorage.setItem(`careway_name_${data.user.id || email}`, fullname);
+                        }
+                    }
+
+                    window.location.href = 'dashboard.html';
+                } else {
+                    errorDiv.textContent = data.error || (Array.isArray(data.username) ? data.username[0] : 'Registration failed. Please check your details.');
+                    errorDiv.style.display = 'block';
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Create Account';
+                }
+            } catch (err) {
+                console.error(err);
+                errorDiv.textContent = 'Network error. Please make sure the server is running.';
+                errorDiv.style.display = 'block';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Create Account';
+            }
+        });
+    </script>
+</body>
+</html>

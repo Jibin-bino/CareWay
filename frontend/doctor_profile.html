@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="CareWay - Book an appointment with your chosen doctor.">
+    <title>CareWay - Doctor Profile &amp; Booking</title>
+    <link rel="stylesheet" href="./css/index.css">
+    <style>
+        body { background-color: #F8FAFD; }
+        .booking-container { max-width: 760px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+        .progress-bar-wrap { display: flex; align-items: center; margin-bottom: 2.5rem; }
+        .prog-step { display: flex; flex-direction: column; align-items: center; }
+        .prog-circle { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--border-color); background: var(--white); color: var(--muted-text); font-size: 0.8rem; font-weight: 700; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .prog-circle.active { background: var(--salesport-blue); border-color: var(--salesport-blue); color: #fff; }
+        .prog-circle.done { background: #16A34A; border-color: #16A34A; color: #fff; }
+        .prog-label { font-size: 0.7rem; color: var(--muted-text); margin-top: 0.3rem; text-align: center; font-weight: 600; }
+        .prog-line { flex: 1; height: 2px; background: var(--border-color); margin-bottom: 1.5rem; }
+        .prog-line.done { background: #16A34A; }
+        .booking-card { background: var(--white); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 2rem; margin-bottom: 1.5rem; box-shadow: 0 1px 4px rgba(6,78,59,0.06); }
+        .doctor-header { display: flex; gap: 1.5rem; align-items: flex-start; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        .doctor-avatar { width: 72px; height: 72px; border-radius: 50%; background: linear-gradient(135deg, var(--salesport-blue), var(--prussian-blue)); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 1.75rem; font-weight: 700; flex-shrink: 0; }
+        .doctor-meta h2 { font-size: 1.5rem; font-weight: 700; color: var(--prussian-blue); margin-bottom: 0.2rem; }
+        .doctor-dept { font-size: 0.875rem; color: var(--salesport-blue); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem; }
+        .doctor-spec { font-size: 0.95rem; color: var(--muted-text); margin-bottom: 0; }
+        .info-row { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
+        .info-pill { background: var(--alice-blue); border-radius: 100px; padding: 0.3rem 0.8rem; font-size: 0.8rem; font-weight: 600; color: var(--prussian-blue); }
+        .fee-box { background: var(--alice-blue); border-radius: var(--radius-md); padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; }
+        .fee-label { font-size: 0.875rem; font-weight: 600; color: var(--muted-text); }
+        .fee-amount { font-size: 1.5rem; font-weight: 800; color: var(--prussian-blue); }
+        .date-grid { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .date-btn { padding: 0.6rem 1.2rem; border: 2px solid var(--border-color); background: var(--white); border-radius: var(--radius-md); cursor: pointer; font-size: 0.9rem; font-weight: 600; color: var(--primary-text); transition: all 0.15s; }
+        .date-btn:hover { border-color: var(--salesport-blue); color: var(--salesport-blue); }
+        .date-btn.selected { background: var(--salesport-blue); border-color: var(--salesport-blue); color: #fff; }
+        .window-section { margin-bottom: 1.5rem; }
+        .window-heading { font-size: 0.875rem; font-weight: 700; color: var(--prussian-blue); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.75rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-color); }
+        .slot-group { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+        .slot-btn { padding: 0.6rem 1.1rem; border: 2px solid var(--border-color); background: var(--white); border-radius: var(--radius-md); cursor: pointer; font-size: 0.9rem; font-weight: 600; transition: all 0.15s; }
+        .slot-btn:hover { border-color: var(--salesport-blue); color: var(--salesport-blue); }
+        .slot-btn.selected { background: var(--salesport-blue); border-color: var(--salesport-blue); color: #fff; }
+        .form-group { margin-bottom: 1.25rem; }
+        .form-label { display: block; font-size: 0.875rem; font-weight: 600; color: var(--primary-text); margin-bottom: 0.4rem; }
+        .form-control { width: 100%; padding: 0.65rem 0.9rem; font-size: 0.95rem; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--white); color: var(--primary-text); transition: border-color 0.15s, box-shadow 0.15s; box-sizing: border-box; }
+        .form-control:focus { outline: none; border-color: var(--salesport-blue); box-shadow: 0 0 0 3px rgba(5,150,105,0.15); }
+        textarea.form-control { resize: vertical; }
+        .summary-box { background: var(--alice-blue); border-radius: var(--radius-md); padding: 1.5rem; margin-bottom: 1.5rem; }
+        .summary-row { display: flex; justify-content: space-between; align-items: baseline; padding: 0.6rem 0; border-bottom: 1px solid rgba(6,78,59,0.08); }
+        .summary-row:last-child { border-bottom: none; }
+        .summary-key { font-size: 0.875rem; color: var(--muted-text); font-weight: 600; }
+        .summary-val { font-size: 0.95rem; color: var(--prussian-blue); font-weight: 700; text-align: right; max-width: 60%; }
+        .error-box { background: #FEF2F2; border: 1px solid #FECACA; border-left: 3px solid #DC2626; color: #991B1B; padding: 0.75rem 1rem; border-radius: var(--radius-md); font-size: 0.875rem; margin-bottom: 1rem; display: none; }
+        .back-btn { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.875rem; font-weight: 600; color: var(--muted-text); background: none; border: none; cursor: pointer; padding: 0; margin-bottom: 1.25rem; }
+        .back-btn:hover { color: var(--primary-text); }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+        .wizard-step { animation: slideUp 0.2s ease-out; }
+    </style>
+</head>
+<body>
+    <nav class="navbar" aria-label="Main Navigation"></nav>
+    <main class="main-content">
+        <div class="booking-container">
+
+            <div id="progress-bar" class="progress-bar-wrap" style="display:none;">
+                <div class="prog-step"><div class="prog-circle" id="pc-1">1</div><span class="prog-label">Date</span></div>
+                <div class="prog-line" id="pl-1"></div>
+                <div class="prog-step"><div class="prog-circle" id="pc-2">2</div><span class="prog-label">Time</span></div>
+                <div class="prog-line" id="pl-2"></div>
+                <div class="prog-step"><div class="prog-circle" id="pc-3">3</div><span class="prog-label">Details</span></div>
+                <div class="prog-line" id="pl-3"></div>
+                <div class="prog-step"><div class="prog-circle" id="pc-4">4</div><span class="prog-label">Confirm</span></div>
+            </div>
+
+            <div id="loading-container" class="booking-card" style="text-align:center; padding:3rem;">
+                <p style="color:var(--muted-text);">Loading doctor profile...</p>
+            </div>
+
+            <div id="step-0" class="wizard-step" style="display:none;">
+                <a href="book_doctor.html" class="back-btn">&#8592; Back to Doctors</a>
+                <div id="doctor-profile-content"></div>
+                <button id="start-booking-btn" class="btn btn-primary" style="width:100%; padding:0.85rem; font-size:1rem; font-weight:700; margin-top:1.5rem;">Book Appointment</button>
+            </div>
+
+            <div id="step-1" class="wizard-step" style="display:none;">
+                <button class="back-btn" onclick="goToStep(0)">&#8592; Back to Profile</button>
+                <div class="booking-card">
+                    <h2 style="font-size:1.25rem; font-weight:700; color:var(--prussian-blue); margin-bottom:1.5rem;">Select a Date</h2>
+                    <div id="dates-container" class="date-grid"></div>
+                </div>
+            </div>
+
+            <div id="step-2" class="wizard-step" style="display:none;">
+                <button class="back-btn" onclick="goToStep(1)">&#8592; Back to Date</button>
+                <div class="booking-card">
+                    <h2 style="font-size:1.25rem; font-weight:700; color:var(--prussian-blue); margin-bottom:1.5rem;">Select Consultation Time</h2>
+                    <div class="window-section">
+                        <div class="window-heading">Morning <span style="font-weight:400; text-transform:none; font-size:0.85rem; color:var(--muted-text);">(10:00 AM - 1:00 PM)</span></div>
+                        <div id="morning-slots" class="slot-group"></div>
+                    </div>
+                    <div class="window-section" style="margin-bottom:0;">
+                        <div class="window-heading">Afternoon <span style="font-weight:400; text-transform:none; font-size:0.85rem; color:var(--muted-text);">(2:00 PM - 5:00 PM)</span></div>
+                        <div id="afternoon-slots" class="slot-group"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="step-3" class="wizard-step" style="display:none;">
+                <button class="back-btn" onclick="goToStep(2)">&#8592; Back to Time</button>
+                <div class="booking-card">
+                    <h2 style="font-size:1.25rem; font-weight:700; color:var(--prussian-blue); margin-bottom:1.5rem;">Patient Details</h2>
+                    <form id="patient-details-form" novalidate>
+                        <div class="form-group">
+                            <label class="form-label" for="patient_name">Full Name *</label>
+                            <input type="text" id="patient_name" class="form-control" placeholder="Your full name" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="patient_email">Email Address *</label>
+                            <input type="email" id="patient_email" class="form-control" placeholder="name@example.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="reason">Reason for Visit <span style="font-weight:400; color:var(--muted-text);">(optional)</span></label>
+                            <textarea id="reason" class="form-control" rows="3" placeholder="Briefly describe your concern..."></textarea>
+                        </div>
+                        <div id="details-error" class="error-box"></div>
+                        <button type="submit" class="btn btn-primary" style="width:100%; padding:0.8rem; font-size:1rem; font-weight:700;">Continue to Summary</button>
+                    </form>
+                </div>
+            </div>
+
+            <div id="step-4" class="wizard-step" style="display:none;">
+                <button class="back-btn" onclick="goToStep(3)">&#8592; Back to Details</button>
+                <div class="booking-card">
+                    <h2 style="font-size:1.25rem; font-weight:700; color:var(--prussian-blue); margin-bottom:1.5rem;">Booking Summary</h2>
+                    <div id="booking-error" class="error-box"></div>
+                    <div class="summary-box">
+                        <div class="summary-row"><span class="summary-key">Doctor</span><span class="summary-val" id="summary-doctor"></span></div>
+                        <div class="summary-row"><span class="summary-key">Department</span><span class="summary-val" id="summary-dept"></span></div>
+                        <div class="summary-row"><span class="summary-key">Date</span><span class="summary-val" id="summary-date"></span></div>
+                        <div class="summary-row"><span class="summary-key">Consultation Window</span><span class="summary-val" id="summary-time"></span></div>
+                        <div class="summary-row"><span class="summary-key">Patient</span><span class="summary-val" id="summary-patient"></span></div>
+                        <div class="summary-row"><span class="summary-key" style="font-size:1rem;">Consultation Fee</span><span class="summary-val" id="summary-fee" style="font-size:1.4rem; color:var(--prussian-blue);"></span></div>
+                    </div>
+                    <button id="confirm-btn" class="btn btn-primary" style="width:100%; padding:0.85rem; font-size:1.05rem; font-weight:700;">Confirm Appointment</button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="footer" id="app-footer"></footer>
+
+    <script src="./js/app.js"></script>
+    <script>
+        var urlParams = new URLSearchParams(window.location.search);
+        var doctorId = urlParams.get('id');
+        var doctorData = null;
+        var availabilityData = [];
+        var selectedDate = null;
+        var selectedSlot = null;
+        var currentStep = 0;
+
+        function formatDate(dateStr) {
+            try {
+                var parts = dateStr.split('-');
+                var dt = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+                return dt.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+            } catch(e) { return dateStr; }
+        }
+
+        function timeWindow(slot) {
+            var h = parseInt(slot.start_time.split(':')[0], 10);
+            return h < 12 ? 'Morning' : (h < 17 ? 'Afternoon' : 'Evening');
+        }
+
+        function slotLabel(slot) {
+            var h = parseInt(slot.start_time.split(':')[0], 10);
+            var mins = slot.start_time.substring(3, 5);
+            var ampm = h >= 12 ? 'PM' : 'AM';
+            var h12 = h % 12 || 12;
+            return h12 + ':' + mins + ' ' + ampm;
+        }
+
+        function updateProgress(step) {
+            var bar = document.getElementById('progress-bar');
+            if (step === 0) { bar.style.display = 'none'; return; }
+            bar.style.display = 'flex';
+            for (var i = 1; i <= 4; i++) {
+                var circle = document.getElementById('pc-' + i);
+                circle.classList.remove('active', 'done');
+                if (i < step) circle.classList.add('done');
+                else if (i === step) circle.classList.add('active');
+            }
+            for (var j = 1; j <= 3; j++) {
+                var line = document.getElementById('pl-' + j);
+                if (j < step) line.classList.add('done'); else line.classList.remove('done');
+            }
+        }
+
+        function showStep(step) {
+            document.querySelectorAll('.wizard-step').forEach(function(el) { el.style.display = 'none'; });
+            document.getElementById('step-' + step).style.display = 'block';
+            currentStep = step;
+            updateProgress(step);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        window.goToStep = function(step) {
+            if (step === 1) renderDates();
+            if (step === 2) renderTimes();
+            if (step === 3) prefillPatientDetails();
+            if (step === 4) renderSummary();
+            showStep(step);
+        };
+
+        async function loadData() {
+            if (!doctorId) {
+                document.getElementById('loading-container').innerHTML = '<p style="color:var(--error);">No doctor selected. <a href="book_doctor.html">Go back</a></p>';
+                return;
+            }
+            try {
+                var docRes = await fetch(API_BASE_URL + '/healthcare/doctors/' + doctorId + '/');
+                var availRes = await fetch(API_BASE_URL + '/healthcare/doctors/' + doctorId + '/availability/');
+                if (!docRes.ok) throw new Error('Not found');
+                doctorData = await docRes.json();
+                availabilityData = await availRes.json();
+                renderDoctorProfile();
+                document.getElementById('loading-container').style.display = 'none';
+                showStep(0);
+            } catch (err) {
+                document.getElementById('loading-container').innerHTML = '<p style="color:var(--error);">Failed to load profile. <a href="book_doctor.html">Go back</a></p>';
+            }
+        }
+
+        function renderDoctorProfile() {
+            var hasSlots = availabilityData.length > 0;
+            var initial = doctorData.name.charAt(0).toUpperCase();
+            var availBadge = hasSlots
+                ? '<span style="background:#DCFCE7;color:#16A34A;border-radius:100px;padding:0.25rem 0.7rem;font-size:0.8rem;font-weight:700;">Available</span>'
+                : '<span style="background:#FEE2E2;color:#DC2626;border-radius:100px;padding:0.25rem 0.7rem;font-size:0.8rem;font-weight:700;">Fully Booked</span>';
+            var bioHtml = doctorData.bio
+                ? '<div style="margin-bottom:1.25rem;"><h3 style="font-size:0.85rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--muted-text);margin-bottom:0.5rem;">About</h3><p style="font-size:0.925rem;line-height:1.6;">' + doctorData.bio + '</p></div>'
+                : '';
+            document.getElementById('doctor-profile-content').innerHTML =
+                '<div class="booking-card"><div class="doctor-header">' +
+                '<div class="doctor-avatar">' + initial + '</div>' +
+                '<div class="doctor-meta"><h2>Dr. ' + doctorData.name + '</h2>' +
+                '<p class="doctor-dept">' + doctorData.department_name + '</p>' +
+                '<p class="doctor-spec">' + doctorData.specialization + '</p></div></div>' +
+                '<div class="info-row"><span class="info-pill">MBBS, MD</span>' +
+                '<span class="info-pill">' + doctorData.experience_years + ' yrs experience</span>' +
+                availBadge + '</div>' + bioHtml +
+                '<div class="fee-box"><span class="fee-label">Consultation Fee</span>' +
+                '<span class="fee-amount">' + formatINR(doctorData.fee) + '</span></div></div>';
+
+            var btn = document.getElementById('start-booking-btn');
+            btn.disabled = !hasSlots;
+            btn.textContent = hasSlots ? 'Book Appointment' : 'No Slots Available';
+            if (!hasSlots) btn.style.opacity = '0.6';
+            btn.onclick = function() {
+                if (!Auth.isAuthenticated()) {
+                    window.location.href = 'login.html?redirect=' + encodeURIComponent(window.location.href);
+                    return;
+                }
+                goToStep(1);
+            };
+        }
+
+        function renderDates() {
+            var container = document.getElementById('dates-container');
+            var seen = {};
+            var uniqueDates = [];
+            availabilityData.forEach(function(a) {
+                if (!seen[a.date]) { seen[a.date] = true; uniqueDates.push(a.date); }
+            });
+            uniqueDates.sort();
+            if (!uniqueDates.length) {
+                container.innerHTML = '<p style="color:var(--muted-text);">No available dates.</p>';
+                return;
+            }
+            container.innerHTML = uniqueDates.map(function(date) {
+                var sel = selectedDate === date ? 'selected' : '';
+                return '<button class="date-btn ' + sel + '" onclick="selectDate(\'' + date + '\')">' + formatDate(date) + '</button>';
+            }).join('');
+        }
+
+        window.selectDate = function(date) { selectedDate = date; selectedSlot = null; goToStep(2); };
+
+        function renderTimes() {
+            var morningEl = document.getElementById('morning-slots');
+            var afternoonEl = document.getElementById('afternoon-slots');
+            var slots = availabilityData.filter(function(a) { return a.date === selectedDate; });
+            var morning = slots.filter(function(a) { return parseInt(a.start_time.split(':')[0], 10) < 13; });
+            var afternoon = slots.filter(function(a) { return parseInt(a.start_time.split(':')[0], 10) >= 13; });
+            function renderGroup(list, el) {
+                if (!list.length) {
+                    el.innerHTML = '<p style="color:var(--muted-text);font-size:0.875rem;">No slots in this window.</p>';
+                    return;
+                }
+                el.innerHTML = list.map(function(s) {
+                    var sel = selectedSlot && selectedSlot.id === s.id ? 'selected' : '';
+                    return '<button class="slot-btn ' + sel + '" onclick="selectSlot(' + s.id + ')">' + slotLabel(s) + '</button>';
+                }).join('');
+            }
+            renderGroup(morning, morningEl);
+            renderGroup(afternoon, afternoonEl);
+        }
+
+        window.selectSlot = function(id) {
+            selectedSlot = availabilityData.find(function(a) { return a.id === id; });
+            goToStep(3);
+        };
+
+        function prefillPatientDetails() {
+            var user = Auth.getUser();
+            if (user) {
+                var n = document.getElementById('patient_name');
+                var e = document.getElementById('patient_email');
+                if (!n.value) n.value = getDisplayName(user) || user.username || '';
+                if (!e.value && user.email) e.value = user.email;
+            }
+        }
+
+        document.getElementById('patient-details-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            var name = document.getElementById('patient_name').value.trim();
+            var email = document.getElementById('patient_email').value.trim();
+            var errEl = document.getElementById('details-error');
+            if (!name || !email) {
+                errEl.textContent = 'Please fill in your name and email.';
+                errEl.style.display = 'block';
+                return;
+            }
+            errEl.style.display = 'none';
+            goToStep(4);
+        });
+
+        function renderSummary() {
+            document.getElementById('summary-doctor').textContent = 'Dr. ' + doctorData.name;
+            document.getElementById('summary-dept').textContent = doctorData.department_name;
+            document.getElementById('summary-date').textContent = formatDate(selectedSlot.date);
+            document.getElementById('summary-time').textContent = slotLabel(selectedSlot) + ' (' + timeWindow(selectedSlot) + ')';
+            document.getElementById('summary-patient').textContent = document.getElementById('patient_name').value;
+            document.getElementById('summary-fee').textContent = formatINR(doctorData.fee);
+        }
+
+        document.getElementById('confirm-btn').addEventListener('click', async function() {
+            var btn = document.getElementById('confirm-btn');
+            var errEl = document.getElementById('booking-error');
+            btn.disabled = true;
+            btn.textContent = 'Booking...';
+            errEl.style.display = 'none';
+            var payload = {
+                availability: selectedSlot.id,
+                patient_name: document.getElementById('patient_name').value.trim(),
+                patient_email: document.getElementById('patient_email').value.trim(),
+                reason: document.getElementById('reason').value.trim()
+            };
+            try {
+                var res = await fetch(API_BASE_URL + '/healthcare/appointments/', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Token ' + Auth.getToken(),
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+                var data = await res.json();
+                if (res.ok) {
+                    window.location.href = 'appointment_confirmation.html?id=' + data.id;
+                } else {
+                    errEl.textContent = data.error || 'Slot may already be taken. Please go back and choose another.';
+                    errEl.style.display = 'block';
+                    btn.disabled = false;
+                    btn.textContent = 'Confirm Appointment';
+                }
+            } catch (err) {
+                errEl.textContent = 'Network error. Please try again.';
+                errEl.style.display = 'block';
+                btn.disabled = false;
+                btn.textContent = 'Confirm Appointment';
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', loadData);
+    </script>
+</body>
+</html>

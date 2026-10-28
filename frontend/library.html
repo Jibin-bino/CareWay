@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="CareWay Health Library - Explore reliable health information.">
+    <title>CareWay - Health Library</title>
+    <link rel="stylesheet" href="./css/index.css">
+    <style>
+        body { background: var(--alice-blue); }
+
+        .lib-page {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1.5rem 1.5rem 2rem;
+        }
+
+        /* Header */
+        .lib-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 2.25rem 1.5rem;
+            background: linear-gradient(135deg, #064E3B 0%, #022C22 100%);
+            border-radius: var(--radius-xl);
+            color: #fff;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            box-shadow: 0 10px 30px rgba(6, 78, 59, 0.15);
+        }
+        .lib-header-bg {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 320px;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.22;
+            mask-image: linear-gradient(to left, rgba(0,0,0,1) 0%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,1) 0%, transparent 100%);
+            pointer-events: none;
+        }
+        .lib-header h1 {
+            font-size: 2.1rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 0.4rem;
+            letter-spacing: -0.02em;
+        }
+        .lib-header p {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.85);
+            margin: 0;
+        }
+
+        /* Tab row */
+        .lib-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            flex-wrap: nowrap;
+            margin-bottom: 1.25rem;
+            overflow-x: auto;
+        }
+        .lib-tab {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.5rem 1rem;
+            border: 2px solid var(--border-color);
+            background: var(--white);
+            border-radius: 100px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--primary-text);
+            cursor: pointer;
+            transition: all 0.15s;
+            white-space: nowrap;
+        }
+        .lib-tab:hover {
+            border-color: var(--salesport-blue);
+            color: var(--salesport-blue);
+        }
+        .lib-tab.active {
+            background: var(--salesport-blue);
+            border-color: var(--salesport-blue);
+            color: #fff;
+        }
+
+        /* Content panel */
+        .lib-panel { display: none; }
+        .lib-panel.active {
+            display: block;
+            animation: fadeUp 0.18s ease-out;
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(5px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .lib-card {
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 1.5rem 1.75rem;
+            box-shadow: 0 1px 4px rgba(6,78,59,0.06);
+        }
+
+        .lib-card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .lib-card-header h2 {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--prussian-blue);
+            margin-bottom: 0.15rem;
+        }
+        .lib-card-header span {
+            font-size: 0.85rem;
+            color: var(--salesport-blue);
+            font-weight: 600;
+        }
+
+        .lib-two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        @media (max-width: 600px) {
+            .lib-two-col { grid-template-columns: 1fr; }
+        }
+
+        .lib-box {
+            background: var(--alice-blue);
+            border-radius: 10px;
+            padding: 0.85rem 1.15rem;
+        }
+        .lib-box h4 {
+            font-size: 0.825rem;
+            font-weight: 700;
+            color: var(--prussian-blue);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-bottom: 0.45rem;
+        }
+        .lib-box p {
+            font-size: 0.9rem;
+            color: var(--primary-text);
+            line-height: 1.55;
+            margin: 0;
+        }
+        .lib-box ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+        .lib-box li {
+            font-size: 0.9rem;
+            color: var(--primary-text);
+            padding-left: 1.15rem;
+            position: relative;
+            line-height: 1.45;
+        }
+        .lib-box li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0.52em;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--salesport-blue);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar" aria-label="Main Navigation"></nav>
+
+    <main class="main-content" style="padding-top:0;">
+        <div class="lib-page">
+
+            <!-- Fixed Header -->
+            <div class="lib-header">
+                <img src="./assets/images/smart_doctor_search.jpg" alt="Health Library Knowledge" class="lib-header-bg">
+                <div style="position: relative; z-index: 2;">
+                    <div style="display:inline-flex; align-items:center; gap:0.4rem; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.25); border-radius:100px; padding:0.25rem 0.85rem; font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.07em; color:#E6F7EF; margin-bottom:0.75rem;">
+                        CareWay Medical Library
+                    </div>
+                    <h1>Health &amp; Wellness Library</h1>
+                    <p>Evidence-based guides, preventive care recommendations, and condition summaries reviewed by clinicians.</p>
+                </div>
+            </div>
+
+            <!-- Tab Row -->
+            <div class="lib-tabs" role="tablist">
+                <button class="lib-tab active" onclick="showTab('diabetes',this)">Diabetes</button>
+                <button class="lib-tab" onclick="showTab('thyroid',this)">Thyroid</button>
+                <button class="lib-tab" onclick="showTab('heart',this)">Heart Health</button>
+                <button class="lib-tab" onclick="showTab('bp',this)">Blood Pressure</button>
+                <button class="lib-tab" onclick="showTab('nutrition',this)">Nutrition</button>
+                <button class="lib-tab" onclick="showTab('wellness',this)">Wellness</button>
+            </div>
+
+            <!-- DIABETES -->
+            <div id="panel-diabetes" class="lib-panel active">
+                <div class="lib-card">
+                    <div class="lib-card-header">
+                        <div>
+                            <h2>Diabetes</h2>
+                            <span>Endocrinology &amp; Metabolism</span>
+                        </div>
+                    </div>
+                    <div class="lib-two-col">
+                        <div class="lib-box">
+                            <h4>What is it?</h4>
+                            <p>A chronic condition where the body cannot properly process blood sugar (glucose) due to insufficient or ineffective insulin production.</p>
+                        </div>
+                        <div class="lib-box">
+                            <h4>Key Symptoms</h4>
+                            <ul>
+                                <li>Frequent urination &amp; thirst</li>
+                                <li>Unexplained weight loss</li>
+                                <li>Blurry vision &amp; fatigue</li>
+                                <li>Slow-healing wounds</li>
+                            </ul>
+                        </div>
+                        <div class="lib-box">
+                            <h4>Types</h4>
+                            <ul>
+                                <li><strong>Type 1</strong> — Autoimmune, insulin needed</li>
+                                <li><strong>Type 2</strong> — Lifestyle-linked, most common</li>
+                                <li><strong>Gestational</strong> — During pregnancy</li>
+                            </ul>
+                        </div>
+                        <div class="lib-box">
+                            <h4>Management Tips</h4>
+                            <ul>
+                                <li>Monitor blood sugar regularly</li>
+                                <li>Low-glycemic, balanced diet</li>
+                                <li>30 min exercise daily</li>
+                                <li>Take medications as prescribed</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- THYROID -->
+            <div id="panel-thyroid" class="lib-panel">
+                <div class="lib-card">
+                    <div class="lib-card-header">
+                        <div>
+                            <h2>Thyroid Health</h2>
+                            <span>Endocrinology &amp; Hormonal Health</span>
+                        </div>
+                    </div>
+                    <div class="lib-two-col">
+                        <div class="lib-box">
+                            <h4>What is it?</h4>
+                            <p>The thyroid is a butterfly-shaped gland in the neck that produces hormones regulating metabolism, heart rate, and energy levels.</p>
+                        </div>
+                        <div class="lib-box">
+                            <h4>Common Conditions</h4>
+                            <ul>
+                                <li><strong>Hypothyroidism</strong> — Underactive; fatigue, weight gain</li>
+                                <li><strong>Hyperthyroidism</strong> — Overactive; rapid heart rate</li>
+                                <li><strong>Hashimoto's</strong> — Autoimmune attack on thyroid</li>
+                                <li><strong>Goiter</strong> — Enlarged thyroid gland</li>
+                            </ul>
+                        </div>
+                        <div class="lib-box">
+                            <h4>Key Symptoms</h4>
+                            <ul>
+                                <li>Unexplained weight changes</li>
+                                <li>Extreme fatigue or hyperactivity</li>
+                                <li>Hair loss or brittle nails</li>
+                                <li>Neck swelling or hoarse voice</li>
+                            </ul>
+                        </div>
+                        <div class="lib-box">
+                            <h4>Management Tips</h4>
+                            <ul>
+                                <li>Get a TSH blood test if symptomatic</li>
+                                <li>Take levothyroxine as prescribed</li>
+                                <li>Eat iodine-rich foods (dairy, fish)</li>
+                                <li>Regular endocrinologist follow-up</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- HEART HEALTH -->
+            <div id="panel-heart" class="lib-panel">
+                <div class="lib-card">
+                    <div class="lib-card-header">
+                        <div>
+                            <h2>Heart Health</h2>
+                            <span>Cardiology &amp; Cardiovascular Wellness</span>
+                        </div>
+                    </div>
+                    <div class="lib-two-col">
+                        <div class="lib-box">
+                            <h4>What is it?</h4>
+                            <p>Cardiovascular disease affects the heart and blood vessels. Up to 80% of premature heart disease is preventable through healthy lifestyle choices.</p>
+                        </div>
+                        <div class="lib-box">
+                            <h4>Warning Signs</h4>
+                            <ul>
+                                <li>Chest pain or tightness</li>
+                                <li>Shortness of breath</li>
+                                <li>Irregular heartbeat</li>
+                                <li>Swelling in legs or ankles</li>
+                            </ul>
+                        </div>
+                        <div class="lib-box">
+                            <h4>Risk Factors</h4>
+                            <ul>
+                                <li>High blood pressure &amp; cholesterol</li>
+                                <li>Smoking &amp; excessive alcohol</li>
+                                <li>Obesity &amp; inactivity</li>
+                                <li>Diabetes &amp; chronic stress</li>
+                            </ul>
+                        </div>
+                        <div class="lib-box">
+                            <h4>Prevention Tips</h4>
+                            <ul>
+                                <li>Eat heart-healthy (low sodium, low fat)</li>
+                                <li>Exercise 150 min/week minimum</li>
+                                <li>Quit smoking completely</li>
+                                <li>Check BP &amp; cholesterol regularly</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BLOOD PRESSURE -->
+            <div id="panel-bp" class="lib-panel">
+                <div class="lib-card">
+                    <div class="lib-card-header">
+                        <div>
+                            <h2>Blood Pressure</h2>
+                            <span>Hypertension &amp; Cardiovascular Risk</span>
+                        </div>
+                    </div>
+                    <div class="lib-two-col">
+                        <div class="lib-box">
+                            <h4>What is it?</h4>
+                            <p>Blood pressure measures the force of blood against artery walls. Normal is ~120/80 mmHg. Consistently above 140/90 mmHg indicates hypertension.</p>
+                        </div>
+                        <div class="lib-box">
+                            <h4>Risk Factors</h4>
+                            <ul>
+                                <li>High salt &amp; poor diet</li>
+                                <li>Physical inactivity &amp; obesity</li>
+                                <li>Smoking &amp; excess alcohol</li>
+                                <li>Family history &amp; ageing</li>
+                            </ul>
+                        </div>
+                        <div class="lib-box">
+                            <h4>Symptoms</h4>
+                            <ul>
+                                <li>Often called the "silent killer" — no symptoms</li>
+                                <li>Severe cases: headache, blurred vision</li>
+                                <li>Nosebleeds in very high readings</li>
+                                <li>Dizziness or chest pain</li>
+                            </ul>
+                        </div>
+                        <div class="lib-box">
+                            <h4>Management Tips</h4>
+                            <ul>
+                                <li>Reduce salt to &lt;2,300 mg/day</li>
+                                <li>Exercise 30 min daily</li>
+                                <li>Take prescribed medication</li>
+                                <li>Monitor BP at home regularly</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NUTRITION -->
+            <div id="panel-nutrition" class="lib-panel">
+                <div class="lib-card">
+                    <div class="lib-card-header">
+                        <div>
+                            <h2>Nutrition</h2>
+                            <span>Diet, Metabolism &amp; Healthy Eating</span>
+                        </div>
+                    </div>
+                    <div class="lib-two-col">
+                        <div class="lib-box">
+                            <h4>Why it matters</h4>
+                            <p>A balanced diet provides the energy and nutrients your body needs. No single food has everything — variety, portion control and consistency are key.</p>
+                        </div>
+                        <div class="lib-box">
+                            <h4>Core Nutrients</h4>
+                            <ul>
+                                <li><strong>Carbs</strong> — Energy; prefer whole grains</li>
+                                <li><strong>Protein</strong> — Muscle &amp; immune; lean meats, legumes</li>
+                                <li><strong>Healthy Fats</strong> — Brain; nuts, olive oil, fish</li>
+                                <li><strong>Fibre</strong> — Digestion; veg, fruits, pulses</li>
+                            </ul>
+                        </div>
+                        <div class="lib-box">
+                            <h4>Signs of Poor Nutrition</h4>
+                            <ul>
+                                <li>Constant fatigue or brain fog</li>
+                                <li>Frequent illness or slow healing</li>
+                                <li>Hair loss or brittle nails</li>
+                                <li>Unexplained weight gain or loss</li>
+                            </ul>
+                        </div>
+                        <div class="lib-box">
+                            <h4>Practical Tips</h4>
+                            <ul>
+                                <li>Half your plate = vegetables &amp; fruit</li>
+                                <li>Choose whole grains over refined</li>
+                                <li>Drink 8 glasses of water daily</li>
+                                <li>Limit processed food &amp; added sugar</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- WELLNESS -->
+            <div id="panel-wellness" class="lib-panel">
+                <div class="lib-card">
+                    <div class="lib-card-header">
+                        <div>
+                            <h2>Wellness</h2>
+                            <span>Mental Health, Sleep &amp; Lifestyle Balance</span>
+                        </div>
+                    </div>
+                    <div class="lib-two-col">
+                        <div class="lib-box">
+                            <h4>What is Wellness?</h4>
+                            <p>Wellness is an active process of building healthy habits across physical, mental and emotional dimensions — not just the absence of illness.</p>
+                        </div>
+                        <div class="lib-box">
+                            <h4>Pillars of Wellness</h4>
+                            <ul>
+                                <li><strong>Sleep</strong> — 7–9 hours per night</li>
+                                <li><strong>Movement</strong> — Daily exercise reduces anxiety</li>
+                                <li><strong>Mindfulness</strong> — Reduces chronic stress</li>
+                                <li><strong>Connection</strong> — Social bonds support longevity</li>
+                            </ul>
+                        </div>
+                        <div class="lib-box">
+                            <h4>Mental Health Signs</h4>
+                            <ul>
+                                <li>Persistent sadness or low mood</li>
+                                <li>Loss of interest in activities</li>
+                                <li>Sleep disturbances or fatigue</li>
+                                <li>Difficulty concentrating</li>
+                            </ul>
+                        </div>
+                        <div class="lib-box">
+                            <h4>Daily Wellness Habits</h4>
+                            <ul>
+                                <li>Keep a consistent sleep schedule</li>
+                                <li>Take a 20 min walk every day</li>
+                                <li>Limit screen time before bed</li>
+                                <li>Seek help early — don't wait</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="footer" id="app-footer"></footer>
+
+    <script src="./js/app.js"></script>
+    <script>
+        function showTab(tabId, btn) {
+            document.querySelectorAll('.lib-panel').forEach(function(p) { p.classList.remove('active'); });
+            document.querySelectorAll('.lib-tab').forEach(function(t) { t.classList.remove('active'); });
+            document.getElementById('panel-' + tabId).classList.add('active');
+            btn.classList.add('active');
+        }
+
+        // URL hash support
+        window.addEventListener('DOMContentLoaded', function() {
+            var hash = window.location.hash.replace('#', '');
+            var map = { diabetes: 'diabetes', thyroid: 'thyroid', 'heart-health': 'heart', 'blood-pressure': 'bp', nutrition: 'nutrition', wellness: 'wellness' };
+            var tabs = document.querySelectorAll('.lib-tab');
+            var keys = ['diabetes', 'thyroid', 'heart', 'bp', 'nutrition', 'wellness'];
+            if (hash && map[hash]) {
+                var idx = keys.indexOf(map[hash]);
+                if (idx >= 0) showTab(map[hash], tabs[idx]);
+            }
+        });
+    </script>
+</body>
+</html>

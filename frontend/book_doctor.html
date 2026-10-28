@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Book a doctor appointment on CareWay - Certified medical specialists across 7+ departments.">
+    <title>CareWay - Book a Doctor</title>
+    <link rel="stylesheet" href="./css/index.css">
+    <style>
+        body { background: var(--alice-blue); }
+
+        .book-hero {
+            background: linear-gradient(135deg, #064E3B 0%, #022C22 100%);
+            padding: 2.75rem 0 3rem;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 1px solid rgba(16, 185, 129, 0.2);
+            color: #fff;
+        }
+        .book-hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 80% 30%, rgba(16, 185, 129, 0.22) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .book-hero-bg {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 380px;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.22;
+            mask-image: linear-gradient(to left, rgba(0,0,0,1) 0%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,1) 0%, transparent 100%);
+            pointer-events: none;
+        }
+        .book-hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 640px;
+        }
+        .book-hero h1 {
+            color: #fff;
+            font-size: 2.25rem;
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            margin-bottom: 0.65rem;
+        }
+        .book-hero p {
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 1.05rem;
+            margin-bottom: 1.25rem;
+        }
+        .book-badges {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+        .book-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            background: rgba(255, 255, 255, 0.14);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 100px;
+            padding: 0.3rem 0.85rem;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: #E6F7EF;
+        }
+
+        .booking-step-title {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--prussian-blue);
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        .step-num {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #10B981, #059669);
+            color: #fff;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: 800;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 1.25rem;
+        }
+        .dept-card {
+            cursor: pointer;
+            text-align: center;
+            padding: 1.5rem 1.25rem;
+            border-radius: var(--radius-lg);
+            border: 1.5px solid var(--border-color);
+            background: var(--white);
+            transition: all 0.2s ease;
+        }
+        .dept-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--salesport-blue);
+            box-shadow: var(--shadow-md);
+        }
+        .dept-card.active {
+            border-color: var(--salesport-blue);
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.22);
+            background: #F4FBF7;
+        }
+        .dept-card h4 {
+            color: var(--prussian-blue);
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }
+        .dept-card p {
+            font-size: 0.825rem;
+            color: var(--muted-text);
+            margin: 0;
+        }
+
+        /* Doctor card styling */
+        .doctor-card {
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.25s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        .doctor-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--salesport-blue);
+            box-shadow: var(--shadow-lg);
+        }
+        .doctor-card-header {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .doc-avatar-circle {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #10B981, #064E3B);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.35rem;
+            font-weight: 700;
+            flex-shrink: 0;
+            box-shadow: 0 3px 10px rgba(6, 78, 59, 0.2);
+        }
+        .doctor-card h4 {
+            font-size: 1.15rem;
+            margin-bottom: 0.2rem;
+            color: var(--prussian-blue);
+        }
+        .doc-spec-badge {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--salesport-blue);
+            background: var(--mint-surface);
+            padding: 0.2rem 0.6rem;
+            border-radius: 100px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar" aria-label="Main Navigation"></nav>
+
+    <!-- Header Hero with Doctor Consultation Image -->
+    <section class="book-hero">
+        <img src="./assets/images/doctor_consultation.jpg" alt="Doctor Consultation" class="book-hero-bg">
+        <div class="container">
+            <div class="book-hero-content">
+                <h1>Book a Certified Doctor</h1>
+                <p>Browse verified specialists across clinical departments, inspect consultation fees, and schedule appointments with confirmed real-time slots.</p>
+                <div class="book-badges">
+                    <span class="book-badge">&#10003; 100% Verified Practitioners</span>
+                    <span class="book-badge">&#10003; Real-Time Slot Availability</span>
+                    <span class="book-badge">&#10003; Instant Appointment Confirmation</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <main class="main-content">
+        <div class="container">
+            <h3 class="booking-step-title">
+                <span class="step-num">1</span>
+                <span>Select Medical Department</span>
+            </h3>
+            <div id="departments-container" class="grid mb-4">
+                <p style="color:var(--muted-text);">Loading departments...</p>
+            </div>
+
+            <div id="doctors-section" style="display: none; margin-top: 3rem;">
+                <h3 class="booking-step-title">
+                    <span class="step-num">2</span>
+                    <span>Choose Specialist &amp; View Slots</span>
+                </h3>
+                <div id="doctors-container" class="grid">
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer" id="app-footer"></footer>
+
+    <script src="./js/app.js"></script>
+    <script>
+        async function loadDepartments() {
+            try {
+                const res = await fetch(`${API_BASE_URL}/healthcare/departments/`);
+                const departments = await res.json();
+                const container = document.getElementById('departments-container');
+                container.innerHTML = '';
+                
+                departments.forEach(dept => {
+                    const card = document.createElement('div');
+                    card.className = 'dept-card';
+                    card.innerHTML = `
+                        <h4>${dept.name}</h4>
+                        <p>${dept.description || 'Specialist care & diagnosis'}</p>
+                    `;
+                    card.onclick = () => {
+                        document.querySelectorAll('.dept-card').forEach(c => c.classList.remove('active'));
+                        card.classList.add('active');
+                        loadDoctors(dept.id);
+                    };
+                    container.appendChild(card);
+                });
+            } catch (err) {
+                document.getElementById('departments-container').innerHTML = '<p style="color:var(--error);">Failed to load departments.</p>';
+            }
+        }
+
+        async function loadDoctors(deptId) {
+            document.getElementById('doctors-section').style.display = 'block';
+            const container = document.getElementById('doctors-container');
+            container.innerHTML = '<p style="color:var(--muted-text);">Loading doctors...</p>';
+            
+            try {
+                const res = await fetch(`${API_BASE_URL}/healthcare/doctors/?department=${deptId}`);
+                const doctors = await res.json();
+                container.innerHTML = '';
+                
+                if (doctors.length === 0) {
+                    container.innerHTML = '<p style="color:var(--muted-text);">No doctors currently registered in this department.</p>';
+                    return;
+                }
+
+                doctors.forEach(doc => {
+                    const card = document.createElement('div');
+                    card.className = 'doctor-card';
+                    const initials = doc.name ? doc.name.charAt(0) : 'D';
+                    card.innerHTML = `
+                        <div class="doctor-card-header">
+                            <div class="doc-avatar-circle">${initials}</div>
+                            <div>
+                                <h4>Dr. ${doc.name}</h4>
+                                <span class="doc-spec-badge">${doc.specialization}</span>
+                            </div>
+                        </div>
+                        <p style="font-size:0.875rem; color:var(--muted-text); margin-bottom:0.4rem;">
+                            Clinical Experience: <strong>${doc.experience_years} years</strong>
+                        </p>
+                        <p style="font-size:0.95rem; margin-bottom: 1.25rem; font-weight:700; color:var(--prussian-blue);">
+                            Consultation Fee: <span style="color:var(--salesport-blue); font-size:1.1rem;">${formatINR(doc.fee)}</span>
+                        </p>
+                        <a href="doctor_profile.html?id=${doc.id}" class="btn btn-primary" style="margin-top:auto; width:100%;">View Profile &amp; Book Slot</a>
+                    `;
+                    container.appendChild(card);
+                });
+                
+                // Smooth scroll to doctors section
+                document.getElementById('doctors-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } catch (err) {
+                container.innerHTML = '<p style="color:var(--error);">Failed to load doctors.</p>';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadDepartments);
+    </script>
+</body>
+</html>

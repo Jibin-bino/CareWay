@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sign in to CareWay - Access your patient portal and healthcare appointments.">
+    <title>CareWay - Login</title>
+    <link rel="stylesheet" href="./css/index.css">
+    <style>
+        body {
+            background-color: var(--alice-blue);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .auth-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem 1.25rem;
+        }
+
+        .auth-split-card {
+            background: var(--white);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-xl);
+            box-shadow: 0 16px 45px -10px rgba(6, 78, 59, 0.14);
+            width: 100%;
+            max-width: 860px;
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 1fr 1.15fr;
+            animation: fadeIn 0.25s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Left visual showcase */
+        .auth-visual-side {
+            position: relative;
+            background: linear-gradient(135deg, #064E3B 0%, #022C22 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 2.25rem 2rem;
+            color: #fff;
+            overflow: hidden;
+        }
+        .auth-visual-img {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.38;
+        }
+        .auth-visual-overlay {
+            position: relative;
+            z-index: 2;
+        }
+        .auth-visual-tag {
+            display: inline-block;
+            background: rgba(16, 185, 129, 0.25);
+            border: 1px solid rgba(16, 185, 129, 0.5);
+            color: #E6F7EF;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 0.25rem 0.75rem;
+            border-radius: 100px;
+            margin-bottom: 0.85rem;
+        }
+        .auth-visual-side h3 {
+            color: #fff;
+            font-size: 1.45rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+            line-height: 1.25;
+        }
+        .auth-visual-side p {
+            color: rgba(255, 255, 255, 0.88);
+            font-size: 0.875rem;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        /* Right Form Side */
+        .auth-card-body {
+            padding: 2.75rem 2.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .auth-brand-badge {
+            text-align: center;
+            font-size: 0.75rem;
+            font-weight: 800;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--salesport-blue);
+            margin-bottom: 0.35rem;
+        }
+
+        .auth-title {
+            font-size: 1.65rem;
+            font-weight: 800;
+            color: var(--prussian-blue);
+            text-align: center;
+            margin-bottom: 0.35rem;
+            letter-spacing: -0.02em;
+        }
+
+        .auth-subtitle {
+            font-size: 0.885rem;
+            color: var(--muted-text);
+            text-align: center;
+            margin-bottom: 1.75rem;
+            line-height: 1.45;
+        }
+
+        .auth-form .form-group {
+            margin-bottom: 1.15rem;
+            position: relative;
+        }
+
+        .auth-form .form-label {
+            display: block;
+            font-size: 0.825rem;
+            font-weight: 600;
+            color: var(--primary-text);
+            margin-bottom: 0.35rem;
+        }
+
+        .auth-form .form-control {
+            width: 100%;
+            padding: 0.65rem 0.85rem;
+            font-size: 0.9rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            background-color: #FFFFFF;
+            color: var(--primary-text);
+            transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+        }
+
+        .auth-form .form-control:focus {
+            outline: none;
+            border-color: var(--salesport-blue);
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.18);
+        }
+
+        .password-input-wrap {
+            position: relative;
+        }
+
+        .password-toggle-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--muted-text);
+            font-size: 1rem;
+            padding: 0.25rem;
+            line-height: 1;
+        }
+
+        .password-toggle-btn:hover {
+            color: var(--primary-text);
+        }
+
+        .auth-error {
+            background-color: #FEF2F2;
+            border: 1px solid #FEE2E2;
+            border-left: 3px solid var(--error);
+            color: #991B1B;
+            font-size: 0.825rem;
+            padding: 0.65rem 0.85rem;
+            border-radius: var(--radius-md);
+            margin-bottom: 1.25rem;
+            display: none;
+        }
+
+        .auth-submit-btn {
+            width: 100%;
+            padding: 0.75rem 1.25rem;
+            font-size: 0.95rem;
+            font-weight: 700;
+            background-color: var(--prussian-blue);
+            color: var(--white);
+            border: 1px solid var(--prussian-blue);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            margin-top: 0.5rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(6, 78, 59, 0.2);
+        }
+
+        .auth-submit-btn:hover {
+            background-color: var(--prussian-blue-dark);
+            border-color: var(--prussian-blue-dark);
+            box-shadow: 0 4px 12px rgba(6, 78, 59, 0.3);
+        }
+
+        .auth-footer-text {
+            font-size: 0.875rem;
+            color: var(--muted-text);
+            text-align: center;
+            margin-top: 1.5rem;
+            margin-bottom: 0;
+        }
+
+        .auth-footer-text a {
+            color: var(--salesport-blue);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .auth-footer-text a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 760px) {
+            .auth-split-card {
+                grid-template-columns: 1fr;
+                max-width: 440px;
+            }
+            .auth-visual-side {
+                display: none;
+            }
+            .auth-card-body {
+                padding: 2rem 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Global Reusable Shared Navbar -->
+    <nav class="navbar" aria-label="Main Navigation"></nav>
+
+    <!-- Main Login Section -->
+    <main class="main-content" style="padding: 0;">
+        <div class="auth-wrapper">
+            <div class="auth-split-card">
+                <!-- Visual Showcase Side -->
+                <div class="auth-visual-side">
+                    <img src="./assets/images/ai_healthcare_collaboration.jpg" alt="CareWay Healthcare Team" class="auth-visual-img">
+                    <div class="auth-visual-overlay">
+                        <span class="auth-visual-tag">Smart Healthcare Navigation</span>
+                        <h3>Continuous Care, Powered by AI Intelligence</h3>
+                        <p>Sign in to view your scheduled appointments, doctor prescriptions, and personalized healthcare triage history.</p>
+                    </div>
+                </div>
+
+                <!-- Form Side -->
+                <div class="auth-card-body">
+                    <div class="auth-brand-badge">CAREWAY PORTAL</div>
+                    <h1 class="auth-title">Welcome Back</h1>
+                    <p class="auth-subtitle">Sign in to manage your appointments and health records.</p>
+                    
+                    <div id="error-message" class="auth-error" role="alert"></div>
+
+                    <form id="login-form" class="auth-form" novalidate>
+                        <div class="form-group">
+                            <label class="form-label" for="email">Email Address</label>
+                            <input type="email" id="email" class="form-control" placeholder="enter email id" required autocomplete="email">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="password">Password</label>
+                            <div class="password-input-wrap">
+                                <input type="password" id="password" class="form-control" placeholder="Enter your password" required autocomplete="current-password">
+                                <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('password', this)" aria-label="Toggle password visibility">👁</button>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="auth-submit-btn" id="btn-submit-login">Sign In</button>
+                    </form>
+
+                    <p class="auth-footer-text">
+                        Don't have an account? <a href="register.html">Register here</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer" id="app-footer"></footer>
+
+    <script src="./js/app.js"></script>
+    <script>
+        function togglePasswordVisibility(fieldId, btn) {
+            const input = document.getElementById(fieldId);
+            if (!input) return;
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.textContent = '🔒';
+            } else {
+                input.type = 'password';
+                btn.textContent = '👁';
+            }
+        }
+
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('error-message');
+            const submitBtn = document.getElementById('btn-submit-login');
+
+            errorDiv.style.display = 'none';
+
+            if (!email || !password) {
+                errorDiv.textContent = 'Please enter both email and password.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Signing in...';
+
+            try {
+                const res = await fetch(`${API_BASE_URL}/auth/login/`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({username: email, password})
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    Auth.setToken(data.token);
+                    Auth.setUser(data.user);
+                    
+                    const params = new URLSearchParams(window.location.search);
+                    const redirectUrl = params.get('redirect') || 'dashboard.html';
+                    window.location.href = redirectUrl;
+                } else {
+                    errorDiv.textContent = data.error || 'Invalid email or password. Please try again.';
+                    errorDiv.style.display = 'block';
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Sign In';
+                }
+            } catch (err) {
+                console.error(err);
+                errorDiv.textContent = 'Network error. Please make sure the backend server is running.';
+                errorDiv.style.display = 'block';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Sign In';
+            }
+        });
+    </script>
+</body>
+</html>
